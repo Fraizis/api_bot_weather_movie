@@ -62,15 +62,3 @@ def movie_handler(message):
         return 'По вашему запросу ничего не найдено.\nПроверьте правильность названия фильма.'
     except Exception:
         return 'Упс...Что-то пошло не так..'
-
-# url = "https://kinopoiskapiunofficial.tech/api/v2.2/films?order=RATING&type=ALL&ratingFrom=0&ratingTo=10&yearFrom=1000&yearTo=3000&keyword={movie}&page=1".format(
-#     movie='Бэтмен')
-#
-# headers = {
-#     'X-API-KEY': f'{movie_key}',
-#     'Content-Type': 'application/json',
-# }
-#
-# response = requests.get(url, headers=headers)
-# data = response.json()
-# print(data)
