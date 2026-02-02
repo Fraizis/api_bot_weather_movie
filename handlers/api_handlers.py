@@ -20,38 +20,61 @@ def self_states(message):
 
     if message.text == '🌦 Погода':
         user_states['user'] = 'weather'
-        bot.send_message(message.chat.id, 'Введите название города и я скажу вам какая там сейчас погода:',
-                         reply_markup=keyboard)
+        bot.send_message(
+            chat_id=message.chat.id,
+            text='Введите название города и я скажу вам какая там сейчас погода:',
+            reply_markup=keyboard
+        )
 
     elif message.text == '🍿 Поиск фильмов':
         user_states['user'] = 'movies'
-        bot.send_message(message.chat.id, 'Какой фильм будем искать?\n'
-                                          'Введите название фильма на английском языке:\n(Пример: Batman)',
-                         reply_markup=keyboard_1)
+        bot.send_message(
+            chat_id=message.chat.id,
+            text='Какой фильм будем искать?\n'
+                 'Введите название фильма:\n(Пример: Batman)',
+            reply_markup=keyboard_1
+        )
+
+    elif message.text == '🥤 Рейтинг фильмов':
+        user_states['user'] = 'top-250'
+        bot.send_message(
+            chat_id=message.chat.id,
+            text='Введите страницу (от 1-13) для показа лучших фильмов'
+                 '\n(Например: 1):',
+            reply_markup=keyboard_1
+        )
 
     elif user_states['user'] == 'weather':
+
         city = weather_api.weather_handler(message.text)
-        bot.send_message(message.chat.id, city)
-        bot.send_message(message.chat.id, '\nПосмотрим погоду в другом городе?\n'
-                                          'Просто введите название:', reply_markup=keyboard)
+        bot.send_message(chat_id=message.chat.id, text=city)
+        bot.send_message(
+            chat_id=message.chat.id,
+            text='\nПосмотрим погоду в другом городе?\n'
+                 'Просто введите название:',
+            reply_markup=keyboard
+        )
 
     elif user_states['user'] == 'movies':
-        if message.text == '🥤 Рейтинг фильмов':
-            user_states['user'] = 'top-1000'
-            bot.send_message(message.chat.id, 'Введите страницу (от 1-10) для показа лучших фильмов\n(Например: 1):',
-                             reply_markup=keyboard_1)
 
-        else:
-            search = movie_api.movie_handler(message.text)
-            for num in search:
-                bot.send_message(message.chat.id, num)
-            bot.send_message(message.chat.id, 'Поищем другой фильм?', reply_markup=keyboard_1)
+        search = movie_api.movie_handler(message.text)
+        for num in search:
+            bot.send_message(chat_id=message.chat.id, text=num)
 
-    elif user_states['user'] == 'top-1000':
+        bot.send_message(
+            chat_id=message.chat.id,
+            text='Поищем другой фильм?',
+            reply_markup=keyboard_1
+        )
+
+    elif user_states['user'] == 'top-250':
+
         answer = movie_api.top_movies_handler(message.text)
         for num in answer:
-            bot.send_message(message.chat.id, num)
-        bot.send_message(message.chat.id, 'Показать другую страницу?\nПросто введите номер от 1 до 10:',
-                         reply_markup=keyboard_1)
+            bot.send_message(chat_id=message.chat.id, text=num)
 
-
+        bot.send_message(
+            chat_id=message.chat.id,
+            text='Показать другую страницу?\nПросто введите номер от 1 до 13:',
+            reply_markup=keyboard_1
+        )

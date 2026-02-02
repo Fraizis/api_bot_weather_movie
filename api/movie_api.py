@@ -1,51 +1,76 @@
 import requests
 from config import config
 
-rapid_key = config.rapid_key
+movie_key = config.movie_key
 
 
 def top_movies_handler(message):
     try:
-        url_2 = "https://imdb-top-1000-movies-series.p.rapidapi.com/list/{page}".format(page=message)
-        headers_2 = {
-            "x-rapidapi-key": "{key}".format(key=rapid_key),
-            "x-rapidapi-host": "imdb-top-1000-movies-series.p.rapidapi.com"
+        url = "https://kinopoiskapiunofficial.tech/api/v2.2/films/collections?type=TOP_250_MOVIES&page={page}".format(
+            page=message)
+        headers = {
+            'X-API-KEY': f'{movie_key}',
+            'Content-Type': 'application/json',
         }
 
-        response = requests.get(url_2, headers=headers_2)
-        answer = response.json()
-        for movie in answer['result']:
-            yield '{rank}. {title}. Рейтинг: {rate}. Жанр: {genre}. Год: {year}. ({star_1}, {star_2})'.format(
-                rank=movie['rank'], title=movie['Series_Title'], year=movie['Released_Year'],
-                star_1=movie['Star1'], star_2=movie['Star2'], genre=movie['Genre'],
-                rate=movie['IMDB_Rating'])
+        response = requests.get(url, headers=headers)
+        data = response.json()
+
+        for item in data['items']:
+            yield ('{posterUrlPreview}. Название: {nameRu}. Рейтинг: Kinopoisk: {ratingKinopoisk}. '
+                   'IMDB: {ratingImdb}. Жанр: {genres}. Год: {year}').format(
+                posterUrlPreview=item['posterUrlPreview'],
+                nameRu=item['nameRu'],
+                ratingKinopoisk=item['ratingKinopoisk'],
+                ratingImdb=item['ratingImdb'],
+                genres=item['genres'][0]['genre'],
+                year=item['year']
+            )
+
+    except requests.exceptions.ConnectionError:
+        return 'Что-то с интернетом...'
+
     except Exception:
         return 'Упс...Что-то пошло не так.'
 
 
 def movie_handler(message):
     try:
-        search = message
-        url = "https://imdb-com.p.rapidapi.com/auto-complete"
-        querystring = {'query': '{search}'.format(search=search)}
+        url = "https://kinopoiskapiunofficial.tech/api/v2.2/films?order=RATING&type=ALL&ratingFrom=0&ratingTo=10&yearFrom=1000&yearTo=3000&keyword={movie}&page=1".format(
+            movie=message)
 
         headers = {
-            "x-rapidapi-key": '{key}'.format(key=rapid_key),
-            "x-rapidapi-host": "imdb-com.p.rapidapi.com"
+            'X-API-KEY': f'{movie_key}',
+            'Content-Type': 'application/json',
         }
 
-        response = requests.get(url, headers=headers, params=querystring)
+        response = requests.get(url, headers=headers)
         data = response.json()
-        for movie in data['data']['d']:
-            yield '\nНазвание: {name}\nПостер: {image}\nТип: {type}\nРейтинг: {rank}\n' \
-                  'В главных ролях: {stars}\nГод: {year}'.format(
-                                 image=movie['i']['imageUrl'], name=movie['l'], type=movie['qid'],
-                                 rank=movie['rank'], stars=movie['s'], year=movie['y'])
+
+        for movie in data['items']:
+            yield ('\nНазвание: {nameRu}\nПостер: {posterUrlPreview}\nТип: {genres}\n'
+                   'Рейтинг: Kinopoisk: {ratingKinopoisk}, Imdb: {ratingImdb}\nГод: {year}').format(
+                nameRu=movie['nameRu'],
+                posterUrlPreview=movie['posterUrlPreview'],
+                genres=movie['genres'][0]['genre'],
+                ratingKinopoisk=movie['ratingKinopoisk'],
+                ratingImdb=movie['ratingImdb'],
+                year=movie['year']
+            )
+
     except KeyError:
         return 'По вашему запросу ничего не найдено.\nПроверьте правильность названия фильма.'
     except Exception:
         return 'Упс...Что-то пошло не так..'
 
-
-
-
+# url = "https://kinopoiskapiunofficial.tech/api/v2.2/films?order=RATING&type=ALL&ratingFrom=0&ratingTo=10&yearFrom=1000&yearTo=3000&keyword={movie}&page=1".format(
+#     movie='Бэтмен')
+#
+# headers = {
+#     'X-API-KEY': f'{movie_key}',
+#     'Content-Type': 'application/json',
+# }
+#
+# response = requests.get(url, headers=headers)
+# data = response.json()
+# print(data)

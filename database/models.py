@@ -21,8 +21,3 @@ class User(BaseModel):
 
 
 User.create_table()
-
-
-
-
-

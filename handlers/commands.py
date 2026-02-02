@@ -4,7 +4,6 @@ from database.models import User
 from loader import bot
 from database import queries
 
-
 user_states = {}
 
 
@@ -42,4 +41,3 @@ def message_history(message):
     bot.send_message(message.chat.id, '\nЖелаете узнать погоду в вашем городе?\n'
                                       'Или может поискать интересный фильм?\n'
                                       'Выберите в меню ниже что вас интересует:', reply_markup=keyboard)
-

@@ -21,13 +21,11 @@ def weather_handler(name):
         return 'Сейчас в городе {city}: {temp_c}°C\nОщущается как: {temp_f}°C\n{clouds}\n' \
                'Минимальная температура достигнет: {tmin}°C\nМаксимальная: {tmax}°C\n' \
                'Скорость ветра: {wind} м/с\n'.format(
-            city=city, temp_c=temperature, temp_f=temperature_feels, clouds=clouds.capitalize() + '.',
-            tmin=temp_min, tmax=temp_max, wind=wind_speed)
+            city=city, temp_c=temperature, temp_f=temperature_feels,
+            clouds=clouds.capitalize() + '.', tmin=temp_min, tmax=temp_max, wind=wind_speed)
 
     except KeyError:
         return 'Это какой то неизвестный мне город...\nВы точно правильно написали название?'
     except Exception:
-        return 'Упс, ошибочка... Похоже что-то с соединенем к сервису погоды.\n' \
+        return 'Упс, ошибочка... Похоже что-то с соединением к сервису погоды.\n' \
                'Такое бывает, попробуйте ещё раз чуть позднее.'
-
-
